@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberAuth</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: #000;
+            color: #0f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Efectos de fondo */
+        .scanlines {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                transparent 50%,
+                rgba(0, 255, 0, 0.05) 51%,
+                transparent 51%);
+            background-size: 100% 4px;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+
+        .glow {
+            position: fixed;
+            width: 200vw;
+            height: 200vh;
+            background: radial-gradient(circle, rgba(0,255,0,0.1) 0%, transparent 70%);
+            animation: pulse 5s infinite;
+        }
+
+        /* Contenedor principal */
+        .auth-container {
+            position: relative;
+            width: 400px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #0f0;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+            overflow: hidden;
+        }
+
+        /* Título con efecto glitch */
+        .cyber-title {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #0f0;
+            animation: glitch 2s infinite;
+        }
+
+        /* Formularios */
+        .auth-form {
+            position: relative;
+            transition: 0.5s;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #0f0;
+            transition: 0.3s;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 30, 0, 0.8);
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-size: 1em;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px #0f0;
+        }
+
+        /* Botón */
+        .cyber-btn {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            border: 2px solid #0f0;
+            color: #0f0;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-btn:hover {
+            background: #0f0;
+            color: #000;
+            box-shadow: 0 0 25px #0f0;
+        }
+
+        /* Switch entre login/register */
+        .form-switch {
+            text-align: center;
+            margin-top: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .form-switch span {
+            color: #0f0;
+            border-bottom: 1px solid #0f0;
+            transition: 0.3s;
+        }
+
+        .form-switch span:hover {
+            color: #0ff;
+            border-color: #0ff;
+        }
+
+        /* Animaciones */
+        @keyframes scan {
+            from { background-position: 0 0; }
+            to { background-position: 0 100%; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0 0 10px #0f0; }
+            25% { transform: translate(-2px, 2px); }
+            50% { text-shadow: 0 0 15px #0f0, 2px -2px 0 #f00; }
+            75% { transform: translate(2px, -2px); }
+            100% { text-shadow: 0 0 10px #0f0; }
+        }
+
+        /* Efecto matrix en inputs */
+        .matrix-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        /* Versión móvil */
+        @media (max-width: 480px) {
+            .auth-container {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="glow"></div>
+    
+    <div class="auth-container">
+        <canvas class="matrix-effect" id="matrix"></canvas>
+        
+        <h1 class="cyber-title">CYBER AUTH</h1>
+        
+        <!-- Formulario de Login -->
+        <form class="auth-form" id="loginForm">
+            <div class="form-group">
+                <label class="form-label">USERNAME</label>
+                <input type="text" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">PASSWORD</label>
+                <input type="password" class="form-input" required>
+            </div>
+            
+            <button type="submit" class="cyber-btn">ACCESS TERMINAL</button>
+        </form>
+
+        <!-- Formulario de Registro -->
+        <form class="auth-form" id="registerForm" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">NEW USERNAME</label>
+                <input type="text" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">ENCRYPTION KEY</label>
+                <input type="password" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">CONFIRM KEY</label>
+                <input type="password" class="form-input" required>
+            </div>
+            
+            <button type="submit" class="cyber-btn">CREATE PROFILE</button>
+        </form>
+
+        <div class="form-switch" id="switchButton">
+            <span>INITIATE PROTOCOL</span>
+        </div>
+    </div>
+
+    <script>
+        // Switch entre formularios
+        const switchButton = document.getElementById('switchButton');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        let isRegister = false;
+
+        switchButton.addEventListener('click', () => {
+            isRegister = !isRegister;
+            loginForm.style.display = isRegister ? 'none' : 'block';
+            registerForm.style.display = isRegister ? 'block' : 'none';
+            switchButton.querySelector('span').textContent = 
+                isRegister ? "RETURN TO LOGIN" : "INITIATE PROTOCOL";
+        });
+
+        // Efecto Matrix
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = document.querySelector('.auth-container').offsetWidth;
+            canvas.height = document.querySelector('.auth-container').offsetHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+        const drops = Array(Math.floor(canvas.width / 20)).fill(0);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0F0';
+            ctx.font = '15px monospace';
+
+            drops.forEach((drop, i) => {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * 20, drop * 20);
+                
+                if (drop * 20 > canvas.height || Math.random() > 0.95) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            });
+        }
+
+        setInterval(drawMatrix, 50);
+
+        // Efecto de glitch aleatorio
+        setInterval(() => {
+            if (Math.random() < 0.1) {
+                document.querySelector('.cyber-title').style.transform = 
+                    `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+                
+                setTimeout(() => {
+                    document.querySelector('.cyber-title').style.transform = 'translate(0)';
+                }, 50);
+            }
+        }, 500);
+
+
+        //NOTA LOGICA DE ENVIO
+    </script>
+</body>
+</html>

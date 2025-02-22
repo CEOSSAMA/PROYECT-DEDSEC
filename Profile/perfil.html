@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cyber Profile</title>
+    <style>
+        :root {
+            --neon-green: #0f0;
+            --cyber-blue: #00f7ff;
+            --hologram-pink: #ff00ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: #000;
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Efecto de grid holográfico */
+        .hologram-bg {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            filter: blur(0.5px);
+            z-index: -1;
+        }
+
+        /* Contenedor principal */
+        .cyber-profile {
+            max-width: 1200px;
+            margin: 2rem auto;
+            border: 3px solid var(--neon-green);
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.2);
+            position: relative;
+            background: rgba(0, 20, 0, 0.9);
+        }
+
+        /* Banner con efecto de partículas */
+        .profile-banner {
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid var(--neon-green);
+        }
+
+        .banner-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* Avatar holográfico */
+        .profile-avatar {
+            position: absolute;
+            bottom: -75px;
+            left: 50px;
+            width: 150px;
+            height: 150px;
+            border: 3px solid var(--neon-green);
+            border-radius: 50%;
+            background: #000;
+            overflow: hidden;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(150%);
+        }
+
+        .profile-avatar:hover {
+            transform: rotate(15deg) scale(1.1);
+            box-shadow: 0 0 30px var(--hologram-pink);
+        }
+
+        /* Sección de información */
+        .profile-info {
+            padding: 100px 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        /* Tarjeta de datos estilo HUD */
+        .data-card {
+            background: rgba(0, 30, 0, 0.8);
+            border: 2px solid var(--neon-green);
+            padding: 1.5rem;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                var(--neon-green), 
+                transparent, 
+                var(--cyber-blue));
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        /* Estadísticas con barras de progreso */
+        .skill-bar {
+            background: rgba(0, 255, 0, 0.1);
+            height: 20px;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--neon-green), 
+                var(--cyber-blue));
+            width: 0;
+            transition: 1s ease-in-out;
+        }
+
+        /* Panel de control lateral */
+        .cyber-panel {
+            border: 2px solid var(--cyber-blue);
+            padding: 1.5rem;
+            background: rgba(0, 0, 30, 0.8);
+            box-shadow: 0 0 30px rgba(0, 247, 255, 0.2);
+        }
+
+        .panel-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #000;
+            border: 2px solid var(--cyber-blue);
+            color: var(--cyber-blue);
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .panel-button:hover {
+            background: var(--cyber-blue);
+            color: #000;
+            letter-spacing: 3px;
+        }
+
+        /* Animaciones */
+        @keyframes borderGlow {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes hologramFloat {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Efecto de terminal */
+        .terminal {
+            background: #000;
+            padding: 1rem;
+            border: 1px solid var(--neon-green);
+            margin: 1rem 0;
+        }
+
+        .terminal::before {
+            content: "root@cyberspace:~$";
+            color: var(--neon-green);
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="hologram-bg"></div>
+    
+    <div class="cyber-profile">
+        <div class="profile-banner" id="profileBanner">
+            <div class="banner-particles" id="particles"></div>
+        </div>
+        
+        <div class="profile-avatar" id="profileAvatar">
+            <img src="" alt="Cyber Avatar" id="avatarImage">
+        </div>
+
+        <div class="profile-info">
+            <div class="main-data">
+                <div class="data-card">
+                    <h2 id="userNickname"></h2>
+                    <div class="terminal" id="userStatus"></div>
+                    
+                    <div class="skill-bar">
+                        <div class="skill-progress" id="cyberSkill"></div>
+                    </div>
+                    <div class="terminal" id="cyberSkillText"></div>
+
+                    <div class="skill-bar">
+                        <div class="skill-progress" id="cryptoMastery"></div>
+                    </div>
+                    <div class="terminal" id="cryptoMasteryText"></div>
+                </div>
+
+                <div class="data-card">
+                    <h3>⨀⨀ RECENT ACTIVITY ⨀⨀</h3>
+                    <div id="activityLog"></div>
+                </div>
+            </div>
+
+            <!-- Panel de control personalizado -->
+            <div class="cyber-panel">
+                <button class="panel-button" onclick="customizeProfile()">CUSTOMIZE PROFILE</button>
+                <!-- Resto de botones... -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar datos del perfil
+        async function loadProfile() {
+            const username = localStorage.getItem('loggedUser');
+            if (!username) window.location = '/login.html';
+
+            try {
+                const response = await fetch(`/api/profile/${username}`);
+                const profile = await response.json();
+
+                // Actualizar UI
+                document.getElementById('avatarImage').src = profile.avatar;
+                document.getElementById('profileBanner').style.backgroundImage = `url(${profile.banner})`;
+                document.getElementById('userNickname').textContent = profile.nickname;
+                
+                document.getElementById('cyberSkill').style.width = `${profile.stats.cyberSkill}%`;
+                document.getElementById('cyberSkillText').textContent = `CYBER SKILL: ${profile.stats.cyberSkill}%`;
+                
+                document.getElementById('cryptoMastery').style.width = `${profile.stats.cryptoMastery}%`;
+                document.getElementById('cryptoMasteryText').textContent = `CRYPTO MASTERY: ${profile.stats.cryptoMastery}%`;
+
+                // Actividad reciente
+                const activityLog = document.getElementById('activityLog');
+                profile.activity.forEach(activity => {
+                    const entry = document.createElement('div');
+                    entry.className = 'terminal';
+                    entry.textContent = activity;
+                    activityLog.appendChild(entry);
+                });
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Personalizar perfil
+        async function customizeProfile() {
+            // Lógica para abrir modal de personalización
+            const newAvatar = prompt('Enter new avatar URL:');
+            const newBanner = prompt('Enter new banner URL:');
+            const newNickname = prompt('Enter new nickname:');
+
+            if (newAvatar || newBanner || newNickname) {
+                const update = {
+                    avatar: newAvatar,
+                    banner: newBanner,
+                    nickname: newNickname
+                };
+
+                try {
+                    const response = await fetch('/api/update-profile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: localStorage.getItem('loggedUser'),
+                            updates: update
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        alert('Profile updated!');
+                        location.reload();
+                    }
+                } catch (error) {
+                    console.error('Update error:', error);
+                }
+            }
+        }
+
+        // Inicializar
+        window.onload = loadProfile;
+    </script>
+</body>
+</html>
