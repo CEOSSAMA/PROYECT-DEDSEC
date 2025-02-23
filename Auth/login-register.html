@@ -19,7 +19,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+          
             position: relative;
         }
 
@@ -169,6 +169,68 @@
             z-index: -1;
         }
 
+        /* Estilos adicionales */
+        .cyber-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #0f0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .cyber-alert.success {
+            border-color: #0f0;
+            background: rgba(0, 30, 0, 0.9);
+        }
+
+        .cyber-alert.error {
+            border-color: #f00;
+            background: rgba(30, 0, 0, 0.9);
+        }
+
+        .alert-text {
+            color: #0f0;
+            font-size: 0.9em;
+        }
+
+        .alert-progress {
+            height: 2px;
+            background: #0f0;
+            margin-top: 10px;
+            animation: progressBar 5s linear;
+        }
+
+        .btn-loader {
+            width: 20px;
+            height: 20px;
+            margin: 0 auto;
+            border: 3px solid #0f0;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .form-note {
+            color: #0f0;
+            font-size: 0.8em;
+            opacity: 0.7;
+            display: block;
+            margin-top: 5px;
+        }
+
+        @keyframes progressBar {
+            from { width: 100%; }
+            to { width: 0; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* Versión móvil */
         @media (max-width: 480px) {
             .auth-container {
@@ -182,48 +244,86 @@
     <div class="scanlines"></div>
     <div class="glow"></div>
     
+    <!-- Notificación estilo hacker -->
+    <div id="cyberAlert" class="cyber-alert" style="display: none;">
+        <span class="alert-text"></span>
+        <div class="alert-progress"></div>
+    </div>
+
     <div class="auth-container">
         <canvas class="matrix-effect" id="matrix"></canvas>
         
-        <h1 class="cyber-title">CYBER AUTH</h1>
+        <h1 class="cyber-title">DEDSEC AUTH</h1>
         
         <!-- Formulario de Login -->
         <form class="auth-form" id="loginForm">
             <div class="form-group">
                 <label class="form-label">USERNAME</label>
-                <input type="text" class="form-input" required>
+                <input type="text" class="form-input" id="loginUsername" required>
             </div>
             
             <div class="form-group">
-                <label class="form-label">PASSWORD</label>
-                <input type="password" class="form-input" required>
+                <label class="form-label">ENCRYPTION KEY</label>
+                <input type="password" class="form-input" id="loginPassword" required>
             </div>
             
-            <button type="submit" class="cyber-btn">ACCESS TERMINAL</button>
+            <button type="submit" class="cyber-btn">
+                <span class="btn-text">ACCESS TERMINAL</span>
+                <div class="btn-loader" style="display: none;"></div>
+            </button>
         </form>
 
         <!-- Formulario de Registro -->
         <form class="auth-form" id="registerForm" style="display: none;">
             <div class="form-group">
-                <label class="form-label">NEW USERNAME</label>
-                <input type="text" class="form-input" required>
+                <label class="form-label">TELEGRAM ID</label>
+                <input type="text" class="form-input" id="regTelegram" required>
+                <small class="form-note">Get your ID via @DedsecAuthBot</small>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">MOBILE CODE</label>
+                <input type="text" class="form-input" id="regMobile" required>
+                <small class="form-note">Format: +1234567890</small>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">HACKER ALIAS</label>
+                <input type="text" class="form-input" id="regUsername" required>
             </div>
             
             <div class="form-group">
                 <label class="form-label">ENCRYPTION KEY</label>
-                <input type="password" class="form-input" required>
+                <input type="password" class="form-input" id="regPassword" required>
             </div>
             
             <div class="form-group">
                 <label class="form-label">CONFIRM KEY</label>
-                <input type="password" class="form-input" required>
+                <input type="password" class="form-input" id="regConfirm" required>
             </div>
             
-            <button type="submit" class="cyber-btn">CREATE PROFILE</button>
+            <button type="submit" class="cyber-btn">
+                <span class="btn-text">INIT PROTOCOL</span>
+                <div class="btn-loader" style="display: none;"></div>
+            </button>
+        </form>
+
+        <!-- Formulario de Verificación -->
+        <form class="auth-form" id="verifyForm" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">VERIFICATION CODE</label>
+                <input type="text" class="form-input" id="verifyCode" required>
+                <small class="form-note">Sent to your mobile</small>
+            </div>
+            
+            <button type="submit" class="cyber-btn">
+                <span class="btn-text">VALIDATE IDENTITY</span>
+                <div class="btn-loader" style="display: none;"></div>
+            </button>
         </form>
 
         <div class="form-switch" id="switchButton">
-            <span>INITIATE PROTOCOL</span>
+            <span>ACTIVATE REGISTRY</span>
         </div>
     </div>
 
@@ -289,8 +389,143 @@
             }
         }, 500);
 
-
-        //NOTA LOGICA DE ENVIO
     </script>
+  <script>
+    // Configuración
+    const API_URL = 'http://localhost:3000/api';
+    let currentMobile = null;
+
+    // Elementos UI
+    const forms = {
+        login: document.getElementById('loginForm'),
+        register: document.getElementById('registerForm'),
+        verify: document.getElementById('verifyForm')
+    };
+
+    // Mostrar notificación
+    function showAlert(message, type = 'error', duration = 5000) {
+        const alert = document.getElementById('cyberAlert');
+        alert.querySelector('.alert-text').textContent = message;
+        alert.className = `cyber-alert ${type}`;
+        alert.style.display = 'block';
+        
+        setTimeout(() => {
+            alert.style.display = 'none';
+        }, duration);
+    }
+
+    // Manejar carga de botones
+    function toggleLoader(button, show) {
+        button.querySelector('.btn-text').style.display = show ? 'none' : 'block';
+        button.querySelector('.btn-loader').style.display = show ? 'block' : 'none';
+    }
+
+    // Registro
+    forms.register.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = e.target.querySelector('button[type="submit"]');
+        
+        if (document.getElementById('regPassword').value !== document.getElementById('regConfirm').value) {
+            return showAlert('ENCRYPTION KEYS MISMATCH', 'error');
+        }
+
+        const data = {
+            telegramId: document.getElementById('regTelegram').value,
+            mobile: document.getElementById('regMobile').value,
+            username: document.getElementById('regUsername').value,
+            password: document.getElementById('regPassword').value
+        };
+
+        try {
+            toggleLoader(button, true);
+            const response = await fetch(`${API_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error);
+
+            currentMobile = data.mobile;
+            forms.register.style.display = 'none';
+            forms.verify.style.display = 'block';
+            switchButton.style.display = 'none';
+            showAlert('VERIFICATION CODE SENT', 'success');
+        } catch (error) {
+            showAlert(error.message, 'error');
+        } finally {
+            toggleLoader(button, false);
+        }
+    });
+
+    // Verificación
+    forms.verify.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = e.target.querySelector('button[type="submit"]');
+        
+        try {
+            toggleLoader(button, true);
+            const response = await fetch(`${API_URL}/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mobile: currentMobile,
+                    code: document.getElementById('verifyCode').value
+                })
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error);
+
+            showAlert('IDENTITY VERIFIED - PROCEED TO LOGIN', 'success');
+            setTimeout(() => window.location.reload(), 2000);
+        } catch (error) {
+            showAlert(error.message, 'error');
+        } finally {
+            toggleLoader(button, false);
+        }
+    });
+
+    // Login
+    forms.login.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = e.target.querySelector('button[type="submit"]');
+        
+        try {
+            toggleLoader(button, true);
+            const response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('loginUsername').value,
+                    password: document.getElementById('loginPassword').value
+                })
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error);
+
+            localStorage.setItem('cyberToken', result.token);
+            window.location.href = '/profile';
+        } catch (error) {
+            showAlert('INVALID CREDENTIALS', 'error');
+        } finally {
+            toggleLoader(button, false);
+        }
+    });
+
+    // Switch entre formularios
+    document.getElementById('switchButton').addEventListener('click', () => {
+        const isVerify = forms.verify.style.display === 'block';
+        if (isVerify) return;
+        
+        const showRegister = forms.register.style.display === 'none';
+        forms.login.style.display = showRegister ? 'none' : 'block';
+        forms.register.style.display = showRegister ? 'block' : 'none';
+        document.getElementById('switchButton').querySelector('span').textContent = 
+            showRegister ? "RETURN TO LOGIN" : "ACTIVATE REGISTRY";
+    });
+</script>
 </body>
 </html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CyberCore Profile</title>
+    <style>
+        :root {
+            --neon-green: #0f0;
+            --cyber-blue: #00f7ff;
+            --hologram-pink: #ff00ff;
+            --matrix-green: #20C20E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: #000;
+            color: var(--matrix-green);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fondo Matrix */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        /* Contenedor principal */
+        .cyber-core {
+            max-width: 1200px;
+            margin: 2rem auto;
+            border: 3px solid var(--neon-green);
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.2);
+            position: relative;
+            background: rgba(0, 20, 0, 0.95);
+            overflow: hidden;
+        }
+
+        /* Header con efecto de circuitos */
+        .neuro-header {
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            background: 
+                linear-gradient(45deg, 
+                    rgba(0, 255, 0, 0.05) 25%, 
+                    transparent 25%, 
+                    transparent 75%, 
+                    rgba(0, 255, 0, 0.05) 75%),
+                linear-gradient(-45deg, 
+                    rgba(0, 255, 0, 0.05) 25%, 
+                    transparent 25%, 
+                    transparent 75%, 
+                    rgba(0, 255, 0, 0.05) 75%);
+            background-size: 20px 20px;
+        }
+
+        /* Avatar con efecto de holograma */
+        .hologram-avatar {
+            position: absolute;
+            bottom: -100px;
+            left: 50px;
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--neon-green);
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.5s;
+            background: 
+                radial-gradient(circle at 50% 0%, 
+                    var(--hologram-pink), 
+                    transparent 70%);
+            animation: hologramFloat 6s ease-in-out infinite;
+        }
+
+        .hologram-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            mix-blend-mode: screen;
+            filter: contrast(150%) saturate(0);
+            transition: 0.5s;
+        }
+
+        .hologram-avatar:hover img {
+            filter: contrast(200%) saturate(1);
+            transform: rotate(360deg);
+        }
+
+        /* Sección de información */
+        .cyber-data {
+            padding: 150px 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            position: relative;
+        }
+
+        /* Tarjeta de datos estilo neuro */
+        .neuro-card {
+            background: rgba(0, 30, 0, 0.9);
+            border: 2px solid var(--neon-green);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 5% 100%, 0 95%);
+        }
+
+        .neuro-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                var(--neon-green), 
+                var(--hologram-pink),
+                var(--cyber-blue));
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        /* Estadísticas cuánticas */
+        .quantum-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-node {
+            background: rgba(0, 50, 0, 0.8);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--matrix-green);
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .stat-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--matrix-green);
+        }
+
+        /* Panel de control cuántico */
+        .quantum-panel {
+            border: 2px solid var(--cyber-blue);
+            padding: 2rem;
+            background: rgba(0, 0, 30, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quantum-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 247, 255, 0.1),
+                transparent
+            );
+            animation: panelScan 3s linear infinite;
+        }
+
+        /* Botones de interfaz */
+        .cyber-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: #000;
+            border: 2px solid var(--matrix-green);
+            color: var(--matrix-green);
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 255, 0, 0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .cyber-button:hover {
+            letter-spacing: 3px;
+            background: rgba(0, 50, 0, 0.8);
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        /* Animaciones */
+        @keyframes borderGlow {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes hologramFloat {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes panelScan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Efecto glitch global */
+        @keyframes textGlitch {
+            0% { text-shadow: 0 0 10px var(--neon-green); }
+            50% { text-shadow: -2px 0 var(--hologram-pink), 2px 0 var(--cyber-blue); }
+            100% { text-shadow: 0 0 10px var(--neon-green); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-core {
+                margin: 1rem;
+                border-width: 2px;
+            }
+
+            .neuro-header {
+                height: 300px;
+            }
+
+            .hologram-avatar {
+                width: 150px;
+                height: 150px;
+                bottom: -75px;
+                left: 20px;
+            }
+
+            .cyber-data {
+                grid-template-columns: 1fr;
+                padding: 120px 1rem 1rem;
+            }
+
+            .quantum-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-bg" id="matrix"></canvas>
+    
+    <div class="cyber-core">
+        <div class="neuro-header">
+            <div class="hologram-avatar" id="profileAvatar">
+                <img src="tu-avatar.jpg" alt="Hologram Avatar" id="avatarImage">
+            </div>
+        </div>
+
+        <div class="cyber-data">
+            <div class="main-info">
+                <div class="neuro-card">
+                    <h2 class="cyber-title" id="userNickname">Ghost_Protocol</h2>
+                    <div class="quantum-stats">
+                        <div class="stat-node">
+                            <h3>Hacking Skill</h3>
+                            <div class="stat-value" id="cyberSkill">98.7%</div>
+                        </div>
+                        <div class="stat-node">
+                            <h3>Crypto Mastery</h3>
+                            <div class="stat-value" id="cryptoMastery">84.3%</div>
+                        </div>
+                        <div class="stat-node">
+                            <h3>Neural Link</h3>
+                            <div class="stat-value" id="neuralLink">73.5%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="neuro-card">
+                    <h3 class="cyber-subtitle">Last Operations</h3>
+                    <div class="operation-list" id="activityLog">
+                        <div class="op-item">⨀ Encrypted Comms Intercepted</div>
+                        <div class="op-item">⨀ Mainframe Breach Detected</div>
+                        <div class="op-item">⨀ Quantum Firewall Activated</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quantum-panel">
+                <button class="cyber-button">Neural Sync</button>
+                <button class="cyber-button">Dark Net Access</button>
+                <button class="cyber-button">Crypto Forge</button>
+                <button class="cyber-button">AI Core</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="LogicaProfile.js"></script>
+    <script>
+        // Matrix Background
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+        const drops = Array(Math.floor(canvas.width / 20)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#20C20E';
+            ctx.font = '15px monospace';
+
+            drops.forEach((drop, i) => {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * 20, drop * 20);
+                
+                if (drop * 20 > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            });
+        }
+
+        setInterval(drawMatrix, 50);
+
+        // Glitch Effect
+        setInterval(() => {
+            const elements = document.querySelectorAll('.cyber-title, .cyber-subtitle');
+            elements.forEach(el => {
+                if (Math.random() < 0.1) {
+                    el.style.textShadow = `
+                        ${Math.random() * 5}px ${Math.random() * 5}px ${Math.random() * 5}px #0f0,
+                        ${Math.random() * -5}px ${Math.random() * -5}px ${Math.random() * 5}px #00f7ff
+                    `;
+                    
+                    setTimeout(() => {
+                        el.style.textShadow = '0 0 10px #0f0';
+                    }, 50);
+                }
+            });
+        }, 100);
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Control v1.3.37</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 15px #00ff0080;
+            padding: 20px;
+            position: relative;
+        }
+
+        .glitch {
+            animation: glitch 1s linear infinite;
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 2px 2px #ff00ff;
+        }
+
+        @keyframes glitch {
+            2% { transform: translate(2px, 0); }
+            50% { transform: translate(-2px, 2px); }
+            52% { transform: translate(-1px, -1px); }
+            54% { transform: translate(2px, 0); }
+        }
+
+        .device-panel {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .sidebar {
+            border-right: 2px solid #00ff00;
+            padding-right: 20px;
+        }
+
+        .device-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .device-item {
+            background: #001100;
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #00ff00;
+            transition: all 0.3s;
+        }
+
+        .device-item:hover {
+            background: #002200;
+            transform: translateX(10px);
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .terminal-input {
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .hacker-btn {
+            background: #002200;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .hacker-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-bg" id="matrix"></canvas>
+    
+    <div class="container">
+        <h1 class="glitch">DEVICE CONTROL INTERFACE</h1>
+        
+        <div class="device-panel">
+            <div class="sidebar">
+                <h2>Add New Device</h2>
+                <input type="text" class="terminal-input" id="deviceName" placeholder="Device Name">
+                <select class="terminal-input" id="deviceType">
+                    <option value="mobile">Mobile</option>
+                    <option value="desktop">Desktop</option>
+                    <option value="iot">IoT Device</option>
+                </select>
+                <button class="hacker-btn" onclick="addDevice()">Initialize Device</button>
+            </div>
+            
+            <div class="main-content">
+                <h2>Active Devices</h2>
+                <ul class="device-list" id="deviceList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix background effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+        const drops = Array(Math.floor(canvas.width / 10)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FF00';
+            
+            drops.forEach((drop, i) => {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * 10, drop * 10);
+                drops[i] = (drop * 10 > canvas.height || Math.random() > 0.95) ? 0 : drop + 1;
+            });
+        }
+        setInterval(drawMatrix, 50);
+
+        // Device management logic
+        async function loadDevices() {
+            try {
+                const response = await fetch('/api/devices');
+                const devices = await response.json();
+                const list = document.getElementById('deviceList');
+                list.innerHTML = devices.map(device => `
+                    <li class="device-item">
+                        <h3>${device.name}</h3>
+                        <p>Type: ${device.type}</p>
+                        <p>Status: <span style="color: #00ff00;">ACTIVE</span></p>
+                        <button class="hacker-btn" onclick="deleteDevice('${device.id}')">Terminate</button>
+                    </li>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading devices:', error);
+            }
+        }
+
+        async function addDevice() {
+            const name = document.getElementById('deviceName').value;
+            const type = document.getElementById('deviceType').value;
+            
+            if (!name) {
+                alert('Device name required!');
+                return;
+            }
+
+            try {
+                await fetch('/api/devices', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, type })
+                });
+                loadDevices();
+            } catch (error) {
+                console.error('Error adding device:', error);
+            }
+        }
+
+        async function deleteDevice(id) {
+            if (!confirm('Terminate device connection?')) return;
+            
+            try {
+                await fetch(`/api/devices/${id}`, { method: 'DELETE' });
+                loadDevices();
+            } catch (error) {
+                console.error('Error deleting device:', error);
+            }
+        }
+
+        // Initial load
+        loadDevices();
+    </script>
+</body>
+</html>

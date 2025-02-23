@@ -1,0 +1,265 @@
+body {
+    margin: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    margin: 0;
+    color: #0f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Animación del texto trazado */
+#text-path {
+    stroke: #0f0;
+    stroke-width: 2;
+    fill: none;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 3s linear forwards;
+}
+
+@keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Logo final */
+.logo {
+    position: absolute;
+    opacity: 0;
+    filter: drop-shadow(0 0 15px #0f0);
+    animation: logoReveal 1s 3s forwards,
+               glitch 2s 4s infinite;
+}
+
+@keyframes logoReveal {
+    from {
+        opacity: 0;
+        transform: scale(10) rotate(360deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+/* Contenido oculto */
+.hidden-content {
+    display: none;
+    color: #0f0;
+    text-align: center;
+    animation: contentAppear 2s forwards;
+}
+
+@keyframes contentAppear {
+    from {
+        opacity: 0;
+        letter-spacing: 20px;
+    }
+    to {
+        opacity: 1;
+        letter-spacing: normal;
+    }
+}
+
+/* Efectos de fondo */
+.scanline {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+        transparent 50%,
+        rgba(0, 255, 0, 0.05) 51%,
+        transparent 51%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+    from { background-position: 0 0; }
+    to { background-position: 0 100%; }
+}
+
+
+/* Menú lateral */
+.hacker-menu {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    height: 100vh;
+    width: 250px;
+    background: rgba(0, 20, 0, 0.95);
+    border-right: 3px solid #0f0;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.hacker-menu.active {
+    left: 0;
+}
+
+/* Efecto de escaneo CRT */
+.crt::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(rgba(0, 255, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Elementos del menú */
+.menu-section {
+    border-bottom: 1px solid #0f0;
+    margin: 15px 0;
+    padding: 10px;
+    transition: all 0.3s;
+}
+
+.menu-section:hover {
+    background: rgba(0, 255, 0, 0.1);
+    transform: translateX(10px);
+}
+
+.menu-item {
+    padding: 8px;
+    cursor: pointer;
+    position: relative;
+}
+
+.menu-item:before {
+    content: ">";
+    margin-right: 10px;
+    color: #0f0;
+}
+
+/* Botón de menú */
+.menu-toggle {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    background: #000;
+    border: 2px solid #0f0;
+    color: #0f0;
+    padding: 10px 20px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background: #0f0;
+    color: #000;
+    box-shadow: 0 0 15px #0f0;
+}
+
+/* Efecto Matrix (extra) */
+#matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  svg {
+    width: 90%;
+    height: auto;
+  }
+  
+  .logo {
+    width: 80vw;
+    height: auto;
+  }
+  
+  .hacker-menu {
+    width: 80%;
+    left: -85%;
+  }
+  
+  .menu-toggle {
+    padding: 15px 25px;
+    font-size: 1.2em;
+  }
+  
+  .menu-section {
+    margin: 10px 0;
+    padding: 8px;
+  }
+  
+  .menu-item {
+    padding: 12px;
+    font-size: 0.9em;
+  }
+  
+  /* Mejorar rendimiento en móviles */
+  .scanline, .crt::before {
+    animation: scan 6s linear infinite;
+  }
+  
+  /* Desactivar hover en móviles */
+  @media (hover: none) {
+    .menu-section:hover {
+      background: transparent;
+      transform: none;
+    }
+  }
+}
+
+/* Animaciones táctiles */
+.menu-item:active {
+    transform: scale(0.95);
+    background: rgba(0, 255, 0, 0.2);
+  }
+  
+  /* Mejorar rendimiento de animaciones */
+  .logo, .menu-section {
+    will-change: transform, opacity;
+  }
+  
+  /* Ajustes de transición para móviles */
+  @media (max-width: 768px) {
+    .hacker-menu {
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      left: 0;
+      transform: translateX(-100%);
+    }
+    
+    .hacker-menu.active {
+      transform: translateX(0);
+    }
+  }
