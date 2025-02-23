@@ -1,0 +1,26 @@
+{
+  "profiles": [
+    {
+      "telegramId": "5722707389",
+      "mobile": "+5351750013",
+      "username": "EternaGhost",
+      "password": "$2b$10$TZ./KKmDVWRKejeYXQqQF.sOGEOELQjDHJLqt8WQ8bEkp/H22PAb2",
+      "verified": true,
+      "profile": {
+        "banner": "/images/default-banner.jpg",
+        "avatar": "/images/default-avatar.jpg",
+        "nickname": "H4CK3R_ETE214",
+        "stats": {
+          "skill": 0,
+          "stealth": 66,
+          "crypto": 15
+        },
+        "activity": [
+          "Joined: 2025-02-22",
+          "Initialized darknet connection"
+        ]
+      }
+    }
+  ],
+  "verificationCodes": {}
+}
